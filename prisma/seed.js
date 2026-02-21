@@ -1,23 +1,13 @@
-import pkg from "@prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
+import prisma from "../src/db/prisma.js";
+import { Role, Gender } from "@prisma/client";
 
-const { PrismaClient, Role, Gender } = pkg;
-
-/*const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-});*/
-
-const adapter = new PrismaPg({
-    connectionString: process.env.DATABASE_URL,
-});
-const prisma = new PrismaClient({ adapter });
 async function main() {
     const alice = await prisma.user.upsert({
-        where: { email: "arbbbbeit@prisma.io" },
+        where: { email: "arbbbbfbeit@prisma.io" },
         update: {},
         create: {
-            email: "arbbbbeit@prisma.io",
-            username: "Alicfffeff1234",
+            email: "arbbbbfbeit@prisma.io",
+            username: "Alicfffffeff1234",
             password: "jelszfo",
             role: Role.ADMIN,
             birthDate: new Date("2003-04-24"),
