@@ -13,15 +13,19 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/waszabi0224/mini-stackoverflow/issues"
   },
   "homepage": "https://github.com/waszabi0224/mini-stackoverflow#readme",
   "dependencies": {
-    "express": "^5.2.1"
+    "@prisma/adapter-pg": "^7.4.1",
+    "@prisma/client": "^7.4.1",
+    "express": "^5.2.1",
+    "pg": "^8.18.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.13"
+    "nodemon": "^3.1.13",
+    "prisma": "^7.4.1"
   }
 }
