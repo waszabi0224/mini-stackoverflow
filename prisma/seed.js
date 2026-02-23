@@ -3,12 +3,12 @@ import { Role, Gender } from "@prisma/client";
 
 async function main() {
     const alice = await prisma.user.upsert({
-        where: { email: "arbbbbfbeit@prisma.io" },
+        where: { email: "ar@prisma.io" },
         update: {},
         create: {
-            email: "arbbbbfbeit@prisma.io",
-            username: "Alicfffffeff1234",
-            password: "jelszfo",
+            email: "ar@prisma.io",
+            username: "Ali",
+            password: "jelo",
             role: Role.ADMIN,
             birthDate: new Date("2003-04-24"),
             gender: Gender.MALE,
