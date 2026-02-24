@@ -2,6 +2,7 @@ import {Router} from "express";
 import bcrypt from "bcrypt";
 import db from "../db/prisma.js";
 import generateTokens from "../utils/jwt.js";
+import isAuthenticated from "../utils/middlewares.js";
 
 const router = Router();
 
@@ -63,6 +64,23 @@ router.post('/bejelentkezes', async(req, res, next) => {
         res.json({
             accessToken,
         });
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.get('/profil', isAuthenticated, async(req, res, next) => {
+    try {
+        const { userId } = req.payload;
+
+        const user = await findUserById(userId);
+        if(!user) {
+            res.status(400);
+            throw new Error("Hibás token.");
+        }
+
+        delete user.password;
+        res.json(user);
     } catch (err) {
         next(err);
     }
