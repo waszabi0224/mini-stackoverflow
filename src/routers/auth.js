@@ -124,5 +124,4 @@ function findUserById(id) {
     });
 }
 
-
 export default router;

@@ -31,4 +31,16 @@ model User {
   birthDate DateTime
   gender Gender @default(MALE)
   createdAt DateTime @default(now())
+
+  tickets Ticket[]
+}
+
+model Ticket {
+  id Int @id @default(autoincrement())
+  userId Int
+  owner User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title String
+  description String
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
 }
