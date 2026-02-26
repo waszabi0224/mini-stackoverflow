@@ -9,7 +9,7 @@ router.post('/', isAuthenticated, async(req, res, next) => {
     try {
         const ownerId = req.payload.userId;
         const { title, description } = req.body;
-        if(! title || !description) {
+        if(!title || !description) {
             res.status(400);
             throw new Error("Töltsd ki a kötelező mezőket.");
         }

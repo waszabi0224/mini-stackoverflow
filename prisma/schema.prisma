@@ -33,6 +33,7 @@ model User {
   createdAt DateTime @default(now())
 
   tickets Ticket[]
+  comments Comment[]
 }
 
 model Ticket {
@@ -41,6 +42,19 @@ model Ticket {
   owner User @relation(fields: [userId], references: [id], onDelete: Cascade)
   title String
   description String
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  comments Comment[]
+}
+
+model Comment {
+  id Int @id @default(autoincrement())
+  userId Int
+  owner User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticketId Int
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  text String
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 }
