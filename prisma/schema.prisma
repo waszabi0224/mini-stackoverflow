@@ -22,6 +22,23 @@ enum Gender {
   FEMALE
 }
 
+enum Action {
+  LOGIN
+  LOGOUT
+  TICKET_CREATED
+  TICKET_UPDATED
+  TICKET_DELETED
+  COMMENT_CREATED
+  COMMENT_UPDATED
+  COMMENT_DELETED
+}
+
+enum EntityType {
+  USER
+  TICKET
+  COMMENT
+}
+
 model User {
   id Int @id @default(autoincrement())
   email String @unique
@@ -34,6 +51,7 @@ model User {
 
   tickets Ticket[]
   comments Comment[]
+  logs ActivityLog[]
 }
 
 model Ticket {
@@ -56,5 +74,16 @@ model Comment {
   ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   text String
   updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model ActivityLog {
+  id Int @id @default(autoincrement())
+  action Action
+  userId Int
+  actor User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entityId Int
+  entityType EntityType
+  metadata Json?
   createdAt DateTime @default(now())
 }

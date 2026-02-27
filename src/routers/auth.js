@@ -1,4 +1,4 @@
-import {Router} from "express";
+import Router from "express";
 import bcrypt from "bcrypt";
 import db from "../db/prisma.js";
 import generateTokens from "../utils/jwt.js";

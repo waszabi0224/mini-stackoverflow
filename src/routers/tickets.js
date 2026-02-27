@@ -1,6 +1,9 @@
 import Router from "express";
 import db from "../db/prisma.js";
 import isAuthenticated from "../utils/middlewares.js";
+import writeLog from "../utils/activitylog.js";
+import pkg from "@prisma/client";
+const { Action, EntityType } = pkg;
 
 const router = Router();
 
@@ -15,6 +18,11 @@ router.post('/', isAuthenticated, async(req, res, next) => {
         }
 
         const ticket = await createTicket({ title, description }, ownerId);
+
+        await writeLog({ action: Action.TICKET_CREATED, userId: ownerId, 
+                        entityId: ticket.id, entityTpye: EntityType.TICKET, 
+                        metadata: { message: "Létrehozva: ", title, description } });
+
         res.json({
             ticket,
         });
