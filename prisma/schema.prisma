@@ -23,8 +23,9 @@ enum Gender {
 }
 
 enum Action {
-  LOGIN
-  LOGOUT
+  NEW_USER_REGISTERED
+  USER_LOGIN
+  USER_LOGOUT
   TICKET_CREATED
   TICKET_UPDATED
   TICKET_DELETED
@@ -84,6 +85,5 @@ model ActivityLog {
   actor User @relation(fields: [userId], references: [id], onDelete: Cascade)
   entityId Int
   entityType EntityType
-  metadata Json?
   createdAt DateTime @default(now())
 }

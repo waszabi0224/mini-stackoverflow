@@ -20,9 +20,7 @@ router.post('/', isAuthenticated, async(req, res, next) => {
         const ticket = await createTicket({ title, description }, ownerId);
 
         await writeLog({ action: Action.TICKET_CREATED, userId: ownerId, 
-                        entityId: ticket.id, entityTpye: EntityType.TICKET, 
-                        metadata: { message: "Létrehozva: ", title, description } });
-
+                        entityId: ticket.id, entityType: EntityType.TICKET });
         res.json({
             ticket,
         });
@@ -76,6 +74,9 @@ router.patch('/:id', isAuthenticated, async(req, res, next) => {
         }
 
         ticket = await updateTicket({ title, description }, ticketId);
+
+        await writeLog({ action: Action.TICKET_UPDATED, userId: ownerId, 
+                        entityId: ticket.id, entityType: EntityType.TICKET });
         res.json({
             ticket,
         });
@@ -103,6 +104,9 @@ router.delete('/:id', isAuthenticated, async(req, res, next) => {
         }
 
         ticket = await deleteTicket(ticketId);
+
+        await writeLog({ action: Action.TICKET_DELETED, userId: ownerId, 
+                        entityId: ticket.id, entityType: EntityType.TICKET });
         res.json({
             ticket,
         });

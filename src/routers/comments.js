@@ -1,6 +1,9 @@
 import Router from "express";
 import db from "../db/prisma.js";
 import isAuthenticated from "../utils/middlewares.js";
+import writeLog from "../utils/activitylog.js";
+import pkg from "@prisma/client";
+const { Action, EntityType } = pkg;
 
 const router = Router();
 
@@ -29,6 +32,9 @@ router.post('/:ticketId', isAuthenticated, async(req, res, next) => {
         }
 
         const comment = await createComment({ text }, ownerId, ticketId);
+
+        await writeLog({ action: Action.COMMENT_CREATED, userId: ownerId, 
+                        entityId: comment.id, entityType: EntityType.COMMENT });
         res.json({
             comment,
         });
@@ -71,6 +77,9 @@ router.patch('/:id', isAuthenticated, async(req, res, next) => {
         }
 
         comment = await updateComment({ text }, commentId);
+
+        await writeLog({ action: Action.COMMENT_UPDATED, userId: ownerId, 
+                        entityId: comment.id, entityType: EntityType.COMMENT });
         res.json({
             comment,
         });
@@ -98,6 +107,9 @@ router.delete('/:id', isAuthenticated, async(req, res, next) => {
         }
 
         comment = await deleteComment(commentId);
+
+        await writeLog({ action: Action.COMMENT_DELETED, userId: ownerId, 
+                        entityId: comment.id, entityType: EntityType.COMMENT });
         res.json({
             comment,
         });

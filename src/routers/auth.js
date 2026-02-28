@@ -3,6 +3,9 @@ import bcrypt from "bcrypt";
 import db from "../db/prisma.js";
 import generateTokens from "../utils/jwt.js";
 import isAuthenticated from "../utils/middlewares.js";
+import writeLog from "../utils/activitylog.js";
+import pkg from "@prisma/client";
+const { Action, EntityType } = pkg;
 
 const router = Router();
 
@@ -30,6 +33,8 @@ router.post('/regisztracio', async(req, res, next) => {
         const user = await createUserByEmailAndPassword({ email, username, password, role, birthDate, gender });
         const { accessToken } = generateTokens(user);
 
+        await writeLog({ action: Action.NEW_USER_REGISTERED, userId: user.id, 
+                        entityId: user.id, entityType: EntityType.USER });
         res.json({
             accessToken,
         });
@@ -60,7 +65,9 @@ router.post('/bejelentkezes', async(req, res, next) => {
         }
 
         const { accessToken } = generateTokens(existingUser);
-        
+
+        await writeLog({ action: Action.USER_LOGIN, userId: existingUser.id, 
+                        entityId: existingUser.id, entityType: EntityType.USER });
         res.json({
             accessToken,
         });
