@@ -13,5 +13,3 @@ function writeLog(activityLog) {
 }
 
 export default writeLog;
-
-//{ action, userId, entityId, entityType, metadata }
