@@ -13,6 +13,7 @@ router.post('/:ticketId', isAuthenticated, async(req, res, next) => {
         const ownerId = req.payload.userId;
         const ticketId = Number(req.params.ticketId);
         const { text } = req.body;
+        const role = req.payload.role;
 
         const ticket = await findTicketById(ticketId);
 
@@ -26,7 +27,7 @@ router.post('/:ticketId', isAuthenticated, async(req, res, next) => {
             throw new Error("Nincs ilyen ticket.");
         }
 
-        if(ownerId !== ticket.userId) {
+        if(ownerId !== ticket.userId && role !== "ADMIN") {
             res.status(400);
             throw new Error("Ehhez a ticket-hez nem szólhatsz hozzá.");
         }
@@ -63,6 +64,7 @@ router.patch('/:id', isAuthenticated, async(req, res, next) => {
         const ownerId = req.payload.userId;
         const commentId = Number(req.params.id);
         const { text } = req.body;
+        const role = req.payload.role;
 
         let comment = await findCommentById(commentId);
 
@@ -71,7 +73,7 @@ router.patch('/:id', isAuthenticated, async(req, res, next) => {
             throw new Error("Nincs ilyen comment.");
         }
 
-        if(comment.userId !== ownerId) {
+        if(comment.userId !== ownerId && role !== "ADMIN") {
             res.status(400);
             throw new Error("Nem módosíthatod ezt a commentet.");
         }
@@ -93,6 +95,7 @@ router.delete('/:id', isAuthenticated, async(req, res, next) => {
     try {
         const ownerId = req.payload.userId;
         const commentId = Number(req.params.id);
+        const role = req.payload.role;
 
         let comment = await findCommentById(commentId);
 
@@ -101,7 +104,7 @@ router.delete('/:id', isAuthenticated, async(req, res, next) => {
             throw new Error("Nincs ilyen comment.");
         }
 
-        if(comment.userId !== ownerId) {
+        if(comment.userId !== ownerId && role !== "ADMIN") {
             res.status(400);
             throw new Error("Nem törölheted ezt a commentet.");
         }

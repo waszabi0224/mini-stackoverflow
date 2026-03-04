@@ -59,6 +59,7 @@ router.patch('/:id', isAuthenticated, async(req, res, next) => {
     try {
         const ticketId = Number(req.params.id);
         const ownerId = req.payload.userId;
+        const role = req.payload.role;
         const { title, description } = req.body;
 
         let ticket = await findTicketById(ticketId);
@@ -68,7 +69,7 @@ router.patch('/:id', isAuthenticated, async(req, res, next) => {
             throw new Error("Nincs ilyen ticket.");
         }
 
-        if(ticket.userId !== ownerId) {
+        if(ticket.userId !== ownerId && role !== "ADMIN") {
             res.status(400);
             throw new Error("Nem módosíthatod ezt a ticketet.");
         }
@@ -90,6 +91,7 @@ router.delete('/:id', isAuthenticated, async(req, res, next) => {
     try {
         const ticketId = Number(req.params.id);
         const ownerId = req.payload.userId;
+        const role = req.payload.role;
 
         let ticket = await findTicketById(ticketId);
 
@@ -98,7 +100,7 @@ router.delete('/:id', isAuthenticated, async(req, res, next) => {
             throw new Error("Nincs ilyen ticket.");
         }
 
-        if(ticket.userId !== ownerId) {
+        if(ticket.userId !== ownerId && role !== "ADMIN") {
             res.status(400);
             throw new Error("Nem törölheted ezt a ticketet.");
         }

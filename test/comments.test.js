@@ -22,7 +22,6 @@ async function registerAndlogin() {
     return res.body.accessToken;
 }
 
-let ticketId;
 let commentId;
 let token;
 
@@ -34,7 +33,7 @@ beforeAll(async() => {
         description: "ez egy teszt ticket létrehozása",
     });
 
-    ticketId = ticket.body.ticket.id;
+    const ticketId = ticket.body.ticket.id;
 
     const res = await request(app).post(`/comments/${ticketId}`).set('Authorization', `Bearer ${token}`).send({
         text: "ez egy teszt comment",
