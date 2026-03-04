@@ -94,7 +94,7 @@ router.delete('/:id', isAuthenticated, async(req, res, next) => {
         const ownerId = req.payload.userId;
         const commentId = Number(req.params.id);
 
-        let comment = await findTicketById(commentId);
+        let comment = await findCommentById(commentId);
 
         if(!comment) {
             res.status(400);
