@@ -21,12 +21,12 @@ router.post('/regisztracio', async(req, res, next) => {
         const existingUsername = await findUserByUsername(username);
 
         if(existingUser) {
-            res.status(400);
+            res.status(409);
             throw new Error("Ez az email cím már létezik.");
         }
 
         if(existingUsername) {
-            res.status(400);
+            res.status(409);
             throw new Error("Ez a felhasználónév már foglalt.");
         }
 
@@ -54,13 +54,13 @@ router.post('/bejelentkezes', async(req, res, next) => {
         const existingUser = await findUserByEmail(email);
 
         if(!existingUser) {
-            res.status(400);
+            res.status(401);
             throw new Error("Hibás felhasználónév vagy jelszó.");
         }
 
         const validPassword = await bcrypt.compare(password, existingUser.password);
         if(!validPassword) {
-            res.status(400);
+            res.status(401);
             throw new Error("Hibás felhasználónév vagy jelszó.");
         }
 
@@ -86,7 +86,7 @@ router.get('/profil', isAuthenticated, async(req, res, next) => {
 
         const user = await findUserById(userId);
         if(!user) {
-            res.status(400);
+            res.status(401);
             throw new Error("Hibás token.");
         }
 

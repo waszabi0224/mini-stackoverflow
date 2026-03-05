@@ -65,12 +65,12 @@ router.patch('/:id', isAuthenticated, async(req, res, next) => {
         let ticket = await findTicketById(ticketId);
 
         if(!ticket) {
-            res.status(400);
+            res.status(404);
             throw new Error("Nincs ilyen ticket.");
         }
 
         if(ticket.userId !== ownerId && role !== "ADMIN") {
-            res.status(400);
+            res.status(403);
             throw new Error("Nem módosíthatod ezt a ticketet.");
         }
 
@@ -96,12 +96,12 @@ router.delete('/:id', isAuthenticated, async(req, res, next) => {
         let ticket = await findTicketById(ticketId);
 
         if(!ticket) {
-            res.status(400);
+            res.status(404);
             throw new Error("Nincs ilyen ticket.");
         }
 
         if(ticket.userId !== ownerId && role !== "ADMIN") {
-            res.status(400);
+            res.status(403);
             throw new Error("Nem törölheted ezt a ticketet.");
         }
 

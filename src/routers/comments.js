@@ -23,12 +23,12 @@ router.post('/:ticketId', isAuthenticated, async(req, res, next) => {
         }
 
         if(!ticket) {
-            res.status(400);
+            res.status(404);
             throw new Error("Nincs ilyen ticket.");
         }
 
         if(ownerId !== ticket.userId && role !== "ADMIN") {
-            res.status(400);
+            res.status(403);
             throw new Error("Ehhez a ticket-hez nem szólhatsz hozzá.");
         }
 
@@ -69,12 +69,12 @@ router.patch('/:id', isAuthenticated, async(req, res, next) => {
         let comment = await findCommentById(commentId);
 
         if(!comment) {
-            res.status(400);
+            res.status(404);
             throw new Error("Nincs ilyen comment.");
         }
 
         if(comment.userId !== ownerId && role !== "ADMIN") {
-            res.status(400);
+            res.status(403);
             throw new Error("Nem módosíthatod ezt a commentet.");
         }
 
@@ -100,12 +100,12 @@ router.delete('/:id', isAuthenticated, async(req, res, next) => {
         let comment = await findCommentById(commentId);
 
         if(!comment) {
-            res.status(400);
+            res.status(404);
             throw new Error("Nincs ilyen comment.");
         }
 
         if(comment.userId !== ownerId && role !== "ADMIN") {
-            res.status(400);
+            res.status(403);
             throw new Error("Nem törölheted ezt a commentet.");
         }
 
