@@ -1,5 +1,4 @@
 import { Routes, Route, Link, Navigate } from "react-router-dom";
-import Home from "./pages/Home.jsx";
 import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
 import TicketDetail from "./pages/TicketDetail.jsx";
@@ -11,7 +10,7 @@ function App() {
   return (
       <div className="App">
         <nav className="flex gap-4 mb-6">
-          <Link to="/tickets">Ticketek</Link>
+          <Link to="/tickets">Home</Link>
           <Link to="/new-ticket">Új ticket</Link>
           <Link to="/profile">Profil</Link>
           <Link to="/login">Bejelentkezés</Link>
