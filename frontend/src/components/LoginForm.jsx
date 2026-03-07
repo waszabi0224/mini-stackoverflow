@@ -35,7 +35,7 @@ function LoginForm() {
             setToken(data.accessToken);
             navigate("/tickets");
         } catch(err) {
-            setError(err.message || "Sikertelen bejelentkezés");
+            setError(err.message || "Sikertelen bejelentkezés.");
         } finally {
             setLoading(false);
         }
