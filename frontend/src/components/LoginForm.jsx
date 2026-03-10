@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { apiFetch } from "../api/client.js";
 import { setToken } from "../utils/token.js";
 
@@ -55,6 +55,11 @@ function LoginForm() {
             {error && <div className="text-red-600 text-sm">{error}</div>}
 
             <button className="w-full bg-black text-white rounded px-3 py-2 disabled:opacity-50" disabled={loading}>{loading ? "Feldolgozás..." : "Bejelentkezés"}</button>
+
+            <div className="text-sm text-center mt-4">
+                <span>Nincs még fiókod? </span>
+                <Link className="font-semibold underline" to="/register">Regisztrálj!</Link>
+            </div>
         </form>
     );
 }
