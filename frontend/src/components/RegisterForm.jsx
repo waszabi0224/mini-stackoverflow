@@ -52,6 +52,8 @@ function RegisterForm() {
         }
     }
 
+    if(error) return <div className="text-red-600 text-sm">{error}</div>;
+
     return (
         <form onSubmit={onSubmit} className="space-y-3">
             <div>
@@ -81,8 +83,6 @@ function RegisterForm() {
                     <option value="FEMALE">Nő</option>
                 </select>
             </div>
-
-            {error && <div className="text-red-600 text-sm">{error}</div>}
 
             <button className="w-full bg-black text-white rounded px-3 py-2 disabled:opacity-50" disabled={loading}>{loading ? "Feldolgozás..." : "Regisztráció"}</button>
 

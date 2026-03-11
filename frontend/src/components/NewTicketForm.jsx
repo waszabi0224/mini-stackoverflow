@@ -37,7 +37,9 @@ function NewTicketForm() {
                 },
                 auth,
             });
-
+            if(Error === "TokenExpiredError") {
+                navigate("/auth/bejelentkezés");
+            }
             navigate("/tickets");
         } catch(err) {
             setError(err.message || "Nem sikerült létrehozni a ticketet.");
