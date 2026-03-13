@@ -1,12 +1,17 @@
 import { useState } from "react";
 import { apiFetch } from "../api/client";
+import { useSearchParams } from "react-router-dom";
 
-function CommentForm({ ticketId }) {
+function CommentForm({ ticketId, onCreated }) {
     const [error, setError] = useState("");
 
     const[loading, setLoading] = useState(false);
 
     const [text, setText] = useState();
+
+    const [params] = useSearchParams();
+
+    const msg = params.get("msg");
 
     function onChange(e) {
         setText(e.target.value);
@@ -26,12 +31,12 @@ function CommentForm({ ticketId }) {
             auth: true,
         });
         setText(data.text);
+        onCreated();
         } catch(err) {
             setError(err.message || "Nem sikerült hozzászólni.");
         } finally {
             setLoading(false);
         }
-        
     }
 
     if(error) return <div className="text-sm text-red-600">{error}</div>;
@@ -43,6 +48,8 @@ function CommentForm({ ticketId }) {
                 <textarea className="flex-1 border rounded p-2" name="text" rows={2} value={text} onChange={onChange} placeholder="Szólj hozzá..." required/>
                 <button className="px-3 py-2 rounded bg-black text-white disabled:opacity-50" disabled={loading}>{loading ? "Mentés..." : "Küldés"}</button>
             </div>
+
+            {msg && <div className="text-sm text-red-600">{msg}</div>}
         </form>
     );
 }

@@ -21,12 +21,11 @@ function HomeForm() {
                 const list = data.tickets;
                 setTickets(list);
             } catch(err) {
-                setError(err.message || "Nem sikerült a listázás");
+                setError(err.message || "Nem sikerült betölteni a ticketeket.");
             } finally {
                 setLoading(false);
             }
         };
-
         loadTickets();
     }, []);
 

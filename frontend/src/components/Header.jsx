@@ -17,14 +17,16 @@ function Header() {
         <header className="border-b bg-white">
             <nav className="max-w-5xl mx-auto p-2 flex gap-4">
                 <Link to="/tickets">Főoldal</Link>
-                <div>
+                <div className="flex gap-3">
                     {token ? (
                         <>
                         <Link to="/new-ticket">Új ticket</Link>
+                        <Link to="/profile">Ticketjeim</Link>
                         </>
                     ) : (
                         <>
                         <Link to="/login">Új ticket</Link>
+                        <Link to="/login">Ticketjeim</Link>
                         </>
                     )}
                 </div>

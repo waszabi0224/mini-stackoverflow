@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "../api/client";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import CommentForm from "./CommentForm";
 
 function TicketDetailForm() {
@@ -14,6 +14,23 @@ function TicketDetailForm() {
 
     const [comments, setComments] = useState([]);
     
+    async function loadingComments() {
+            setLoading(true);
+            setError("");
+
+            try {
+                const data = await apiFetch(`/comments/${id}`, {
+                    method: "GET",
+                });
+                const list = data.comments;
+                setComments(list);
+            } catch(err) {
+                setError(err.message || "Nincs még hozzászólás.");
+            } finally {
+                setLoading(false);
+            }
+        }
+
     useEffect(() => {
         async function loadingTicketsDetail() {
             setLoading(true);
@@ -26,23 +43,6 @@ function TicketDetailForm() {
                 setTicket(data.ticket ?? data);
             } catch(err) {
                 setError(err.message || "Nem sikerült a betöltés");
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        async function loadingComments() {
-            setLoading(true);
-            setError("");
-
-            try {
-                const data = await apiFetch(`/comments/${id}`, {
-                    method: "GET",
-                });
-                const list = data.comments;
-                setComments(list);
-            } catch(err) {
-                setError(err.message || "Nincs még hozzászólás.");
             } finally {
                 setLoading(false);
             }
@@ -74,7 +74,7 @@ function TicketDetailForm() {
                     </li>
                 ))}
             </ul>
-            <CommentForm ticketId={id}/>
+            <CommentForm ticketId={id} onCreated={loadingComments}/>
         </div>
     );
 }

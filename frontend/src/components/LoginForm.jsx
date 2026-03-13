@@ -2,9 +2,14 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { apiFetch } from "../api/client.js";
 import { setToken } from "../utils/token.js";
+import { useSearchParams } from "react-router-dom";
 
 function LoginForm() {
     const navigate = useNavigate();
+
+    const [params] = useSearchParams();
+
+    const msg = params.get("msg");
 
     const [form, setForm] = useState({
         email: "",
@@ -59,6 +64,10 @@ function LoginForm() {
             <div className="text-sm text-center mt-4">
                 <span>Nincs még fiókod? </span>
                 <Link className="font-semibold underline" to="/register">Regisztrálj!</Link>
+            </div>
+
+            <div>
+                 {msg && <div className="text-sm text-red-600">{msg}</div>};
             </div>
         </form>
     );

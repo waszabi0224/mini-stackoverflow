@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { getToken } from "../utils/token";
 import { useState } from "react";
 import { apiFetch } from "../api/client";
 
@@ -10,8 +9,6 @@ function NewTicketForm() {
         title: "",
         description: "",
     });
-
-    //const [auth, setAuth] = useState(false);
 
     const [loading, setLoading] = useState(false);
 
@@ -35,9 +32,6 @@ function NewTicketForm() {
                 },
                 auth: true,
             });
-            if(Error === "TokenExpiredError") {
-                navigate("/auth/bejelentkezés");
-            }
             navigate("/tickets");
         } catch(err) {
             setError(err.message || "Nem sikerült létrehozni a ticketet.");

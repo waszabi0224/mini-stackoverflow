@@ -18,8 +18,10 @@ export async function apiFetch(path, { method, body, auth = false }) {
     const res = await fetch(`${URL}${path}`, { method, headers, body: body ? JSON.stringify(body) : undefined });
 
     if(res.status === 401) {
-            removeToken();
-            window.location.href = "/auth/bejelentkezes";
+        removeToken();
+        const message = encodeURIComponent("A munkamenet lejárt. A folytatáshoz jelentkezz be újra.");
+        window.location.assign(`/login?msg=${message}`);
+        return;
     } 
 
     //a fetch hívás értékét leellenőrzi, hogy JSON-e
