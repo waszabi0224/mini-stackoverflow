@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { apiFetch } from "../api/client";
 import { useParams } from "react-router-dom";
 import CommentForm from "./CommentForm";
+import CommentUpdateForm from "./CommentUpdateForm.jsx";
 
 function TicketDetailForm() {
     const [ticket, setTicket] = useState();
@@ -13,6 +14,28 @@ function TicketDetailForm() {
     const { id } = useParams();
 
     const [comments, setComments] = useState([]);
+
+    const [userId, setUserId] = useState();
+
+    useEffect(() => {
+        async function addUser() {
+            setLoading(true);
+            setError("");
+
+            try {
+                const user = await apiFetch("/auth/profil", {
+                    method: "GET",
+                    auth: true,
+                });
+                setUserId(user.id);
+            } catch(err) {
+                setError(err.message || "Nem sikerült módosítani a kommentet.");
+            } finally {
+                setLoading(false);
+            }
+        }
+        addUser();
+    }, []);
     
     async function loadingComments() {
             setLoading(true);
@@ -28,6 +51,26 @@ function TicketDetailForm() {
                 setError(err.message || "Nincs még hozzászólás.");
             } finally {
                 setLoading(false);
+            }
+        }
+
+        async function deleteComment(commentId) {
+            setLoading(true);
+            setError("");
+
+            const confirmation = confirm("Biztosan törölni akarod ezt a kommentet?");
+            if(confirmation) {
+                try {
+                    const data = await apiFetch(`/comments/${commentId}`, {
+                        method: "DELETE",
+                        auth: true,
+                    });
+                    loadingComments();
+                } catch(err) {
+                    setError(err.message || "Nem sikerült módosítani a kommentet.");
+                } finally {
+                    setLoading(false);
+                }
             }
         }
 
@@ -71,6 +114,10 @@ function TicketDetailForm() {
                         <div className="text-sm">{c.owner.username}</div>
                         <div className="text-sm">{c.text}</div>
                         <div className="text-sm">{c.createdAt}</div>
+
+                        <CommentUpdateForm key={c.id} comment={c} onCreated={loadingComments} />
+
+                        {(userId === c.userId) && <button type="button" onClick={() => deleteComment(c.id)} className="underline text-sm mt-2">Törlés</button>}
                     </li>
                 ))}
             </ul>
