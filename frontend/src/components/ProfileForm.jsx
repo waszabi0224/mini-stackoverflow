@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { apiFetch } from "../api/client";
 
 function ProfileForm() {
@@ -11,6 +11,7 @@ function ProfileForm() {
 
     const {id} = useParams();
 
+    const navigate = useNavigate();
 
     async function loadingTickets() {
         setLoading(true);
@@ -31,22 +32,26 @@ function ProfileForm() {
     };
 
     async function deleteTicket(id) {
-        setLoading(true);
-        setError("");
-
         const confirmation = confirm("Biztosan törölni akarod ezt a ticketet?");
         if(confirmation) {
+            setLoading(true);
+            setError("");
+
             try {
             const data = await apiFetch(`/tickets/${id}`, {
                 method: "DELETE",
                 auth: true,
             });
             loadingTickets();
+            navigate("/profil");
             } catch(err) {
                 setError(err.message || "Nem sikerült törölni a ticketet.");
             } finally {
                 setLoading(false);
             }
+        }
+        else {
+            loadingTickets();
         }
     }
 
@@ -54,26 +59,32 @@ function ProfileForm() {
         loadingTickets();
     },[id]);
 
-    if(loading) return <div className="p-4">Betöltés...</div>;
-    if(error) return <div className="text-red-600">{error}</div>;
-
     return (
-        <div>
-            <ul className="space-y-3">
-                {tickets.map((t) => (
-                    <li key={t.id} className="border rounded p-3 bg-white">
-                        <div className="text-sm">{t.owner.username}</div>
-                        <div className="font-semibold">{t.title}</div>
-                        <div className="text-sm text-gray-600">{t.description}</div>
+        <div className="bg-taupe-300 min-w-screen min-h-screen flex flex-col items-center">
+            <div className="border-x">
+                <h1 className="text-3xl font-medium mt-5 mx-20">Ticketjeim</h1>
+                <div className="">
+                    <ul className="space-y-5 m-7 mx-20 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        {tickets.map((t) => (
+                            <li key={t.id} className="flex flex-col border rounded bg-slate-200 max-w-130">
+                                <div className="flex flex-col">
+                                    <div className="text-xl font-semibold text-left p-3 max-h-25 line-clamp-3">{t.title}</div>
+                                    <div className="text-md text-gray-700 text-left px-3 max-h-20 line-clamp-3">{t.description}</div>
+                                </div>
+                                                
+                                <div className="flex flex-col items-start text-sm m-3 underline">
+                                    <Link to={`/tickets/${t.id}/edit`}>Módosítás</Link>
+                                    <button onClick={() => deleteTicket(t.id)}>Törlés</button>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
 
-                        <div className="mt-2">
-                            <Link className="underline text-sm" to={`/tickets/${t.id}/edit`}>Módosítás</Link>
-                        </div>
-
-                        <button onClick={() => deleteTicket(t.id)} className="underline text-sm mt-2">Törlés</button>
-                    </li>
-                ))}
-            </ul>
+            {loading && <div className="p-4">Betöltés...</div>}
+            {error && <div className="text-red-600">{error}</div>}
+            {tickets.length === 0 && <div className="text-red-600">Nincsenek tickejeid.</div>}
         </div>
     );
 }

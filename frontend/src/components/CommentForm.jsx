@@ -30,7 +30,7 @@ function CommentForm({ ticketId, onCreated }) {
             },
             auth: true,
         });
-        setText(data.text);
+        setText("");
         onCreated();
         } catch(err) {
             setError(err.message || "Nem sikerült hozzászólni.");
@@ -39,17 +39,16 @@ function CommentForm({ ticketId, onCreated }) {
         }
     }
 
-    if(error) return <div className="text-sm text-red-600">{error}</div>;
-    if(loading) return <div className="p-4">Betöltés...</div>;
-
     return (
-        <form onSubmit={onSubmit} className="mt-6 space-y-2">
-            <div className="flex gap-2 items-start">
-                <textarea className="flex-1 border rounded p-2" name="text" rows={2} value={text} onChange={onChange} placeholder="Szólj hozzá..." required/>
-                <button className="px-3 py-2 rounded bg-black text-white disabled:opacity-50" disabled={loading}>{loading ? "Mentés..." : "Küldés"}</button>
+        <form onSubmit={onSubmit} className="flex flex-col">
+            <div className="flex max-w-full gap-1 justify-center items-end">
+                <textarea className="border rounded p-2 bg-stone-200 w-130 resize-none overflow-hidden" name="text" rows={2} value={text} onChange={onChange} onInput={(e) => {e.target.style.height = "auto"; e.target.style.height = e.target.scrollHeight + "px";}} placeholder="Szólj hozzá..." required/>
+                <button className="bg-black w-25 h-10 mb-2 text-white rounded disabled:opacity-50 cursor-pointer hover:scale-105 transition-all" disabled={loading}>{loading ? "Mentés..." : "Küldés"}</button>
             </div>
 
             {msg && <div className="text-sm text-red-600">{msg}</div>}
+            {error && <div className="text-sm text-red-600">{error}</div>}
+            {loading && <div className="p-4">Betöltés...</div>}
         </form>
     );
 }

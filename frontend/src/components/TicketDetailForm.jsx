@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "../api/client";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import CommentForm from "./CommentForm";
 import CommentUpdateForm from "./CommentUpdateForm.jsx";
+import { getToken } from "../utils/token.js";
 
 function TicketDetailForm() {
     const [ticket, setTicket] = useState();
@@ -17,25 +18,36 @@ function TicketDetailForm() {
 
     const [userId, setUserId] = useState();
 
-    useEffect(() => {
-        async function addUser() {
-            setLoading(true);
-            setError("");
+    const [role, setRole] = useState();
 
-            try {
-                const user = await apiFetch("/auth/profil", {
-                    method: "GET",
-                    auth: true,
-                });
-                setUserId(user.id);
-            } catch(err) {
-                setError(err.message || "Nem sikerült módosítani a kommentet.");
-            } finally {
-                setLoading(false);
+    const token = getToken();
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if(token) {
+            async function addUser() {
+                setLoading(true);
+                setError("");
+
+                try {
+                    const user = await apiFetch("/auth/profil", {
+                        method: "GET",
+                        auth: true,
+                    });
+                    setUserId(user.id);
+                    setRole(user.role);
+                } catch(err) {
+                    setError(err.message || "Nem sikerült módosítani a kommentet.");
+                } finally {
+                    setLoading(false);
+                }
             }
+            addUser();
+        } else {
+            return;
         }
-        addUser();
-    }, []);
+    }, [token]);
     
     async function loadingComments() {
             setLoading(true);
@@ -72,6 +84,9 @@ function TicketDetailForm() {
                     setLoading(false);
                 }
             }
+            else {
+                loadingComments();
+            }
         }
 
     useEffect(() => {
@@ -83,7 +98,7 @@ function TicketDetailForm() {
                 const data = await apiFetch(`/tickets/${id}`, {
                     method: "GET",
                 });
-                setTicket(data.ticket ?? data);
+                setTicket(data.ticket);
             } catch(err) {
                 setError(err.message || "Nem sikerült a betöltés");
             } finally {
@@ -95,33 +110,67 @@ function TicketDetailForm() {
         loadingComments();
     }, [id]);
 
-    if(loading) return <div className="p-4">Betöltés...</div>
-    if(error) return <div className="p-4 text-red-600">{error}</div>
-    if(!ticket) return <div className="p-4 text-red-600">{error}</div>
+    async function deleteTicket(id) {
+            const confirmation = confirm("Biztosan törölni akarod ezt a ticketet?");
+            if(confirmation) {
+                setLoading(true);
+                setError("");
+
+                try {
+                const data = await apiFetch(`/tickets/${id}`, {
+                    method: "DELETE",
+                    auth: true,
+                });
+                navigate("/tickets");
+
+                } catch(err) {
+                    setError(err.message || "Nem sikerült törölni a ticketet.");
+                } finally {
+                    setLoading(false);
+                }
+            }
+        }
+
+    if(!ticket) return <div className="p-4 text-red-600">{error}</div>;
 
     return (
-        <div className="max-w-4xl mx-auto p-4">
-            <h1 className="text-2xl font-bold">{ticket.title}</h1>
-            <p className="text-gray-600 mt-2">{ticket.description}</p>
-            <div className="text-sm mt-4">Létrehozva: {ticket.createdAt}</div>
-            <div className="text-sm mt-4">Módosítva: {ticket.updatedAt}</div>
-            <div className="text-sm mt-4">Feltöltő: {ticket.owner.username}</div>
-            <div className="text-sm mt-4">{ticket.comments}</div>
+        <div className="flex justify-center items-start min-w-screen min-h-screen bg-taupe-300">
+            <div className="m-7 space-y-5">
+                <h1 className="text-3xl font-semibold">Részletek</h1>
+                <div className="flex flex-col border rounded-md bg-slate-200 w-160">
+                    <div className="flex justify-start gap-2 text-sm text-gray-500 mt-4 ml-3">Feltöltő: {ticket.owner.username}</div>
+                    <div className="text-xl font-semibold text-left p-3">{ticket.title}</div>
+                    <div className="text-md text-gray-700 text-left px-3">{ticket.description}</div>
+                    <div className="flex justify-end gap-2 text-sm text-gray-500 mt-4 mr-3">Létrehozva: {new Date(ticket.createdAt).toISOString().split("T")[0]}</div>
+                    <div className="flex justify-end gap-2 text-sm text-gray-500 mt-1 mb-2 mr-3">Módosítva: {new Date(ticket.updatedAt).toISOString().split("T")[0]}</div>
+                
+                    <div className="flex flex-col justify-start items-start text-sm m-3">
+                        {role === "ADMIN" && <button type="button" onClick={() => deleteTicket(ticket.id)} className="underline">Törlés</button>}
+                    </div>
+                </div>
 
-            <ul className="space-y-3">
-                {comments.map((c) => (
-                    <li key={c.id} className="border rounded p-3 bg-white">
-                        <div className="text-sm">{c.owner.username}</div>
-                        <div className="text-sm">{c.text}</div>
-                        <div className="text-sm">{c.createdAt}</div>
+                <ul className="flex justify-center items-center flex-col gap-3">
+                    {comments.map((c) => (
+                        <li key={c.id} className="border rounded bg-white w-150">
+                            <div className="flex justify-start gap-2 text-sm text-gray-500 mt-4 ml-3">{c.owner.username}</div>
+                            <div className="text-md text-gray-700 text-left px-3">{c.text}</div>
+                            <div className="flex justify-end gap-2 text-sm text-gray-500 mt-4 mr-3">Létrehozva: {new Date(c.createdAt).toISOString().split("T")[0]}</div>
+                            <div className="flex justify-end gap-2 text-sm text-gray-500 mt-1 mr-3">Módosítva: {new Date(c.updatedAt).toISOString().split("T")[0]}</div>
 
-                        <CommentUpdateForm key={c.id} comment={c} onCreated={loadingComments} />
+                            <div className="flex flex-col justify-start items-start text-sm m-3">
+                                <CommentUpdateForm key={c.id} comment={c} onCreated={loadingComments}/>
+                                {(userId === c.userId || role === "ADMIN") && <button type="button" onClick={() => deleteComment(c.id)} className="underline cursor-pointer">Törlés</button>}
+                            </div>
+                        </li>
+                    ))}
+                </ul>
 
-                        {(userId === c.userId) && <button type="button" onClick={() => deleteComment(c.id)} className="underline text-sm mt-2">Törlés</button>}
-                    </li>
-                ))}
-            </ul>
-            <CommentForm ticketId={id} onCreated={loadingComments}/>
+                {token && <div><CommentForm ticketId={id} onCreated={loadingComments}/></div>}
+            </div>
+
+            {loading && <div className="p-4">Betöltés...</div>}
+            {error && <div className="p-4 text-red-600">{error}</div>}
+            {!ticket && <div className="p-4 text-red-600">{error}</div>}
         </div>
     );
 }

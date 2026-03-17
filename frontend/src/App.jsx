@@ -13,9 +13,10 @@ function App() {
       <div className="App">
         <Header />
           <Routes>
+            <Route path="/" element={<Tickets />} />
             <Route path="/tickets" element={<Tickets />} />
             <Route path="/new-ticket" element={<NewTicket />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/profil" element={<Profile />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/tickets/:id" element={<TicketDetail />} />

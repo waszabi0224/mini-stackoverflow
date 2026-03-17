@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { getToken, removeToken } from "../utils/token.js";
 
 const URL = import.meta.env.VITE_API_URL;
@@ -22,7 +21,7 @@ export async function apiFetch(path, { method, body, auth = false }) {
         const message = encodeURIComponent("A munkamenet lejárt. A folytatáshoz jelentkezz be újra.");
         window.location.assign(`/login?msg=${message}`);
         return;
-    } 
+    }
 
     //a fetch hívás értékét leellenőrzi, hogy JSON-e
     const isJson = res.headers.get("content-type")?.includes("application/json");
