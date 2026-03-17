@@ -41,15 +41,45 @@ router.get('/', async(req, res, next) => {
     }
 });
 
-//egy listázása
-router.get('/:id', isAuthenticated, async(req, res, next) => {
+//egy user alapján listázás
+router.get('/me', isAuthenticated, async(req, res, next) => {
     try {
         const ownerId = req.payload.userId;
+        const role = req.payload.role;
+
         const tickets = await findTicketByUserId(ownerId);
+
+        /*if(tickets.length !== 0) {
+            if(tickets[0].userId !== ownerId && role !== "ADMIN") {
+                res.status(403);
+                throw new Error("Nem nézheted meg ezt a fiókot.");
+            }
+        } else {
+            res.status(404).json({ error: "Nincsenek még ticketjeid." });
+        }*/
         res.json({
             tickets,
         });
     } catch (err) {
+        next(err);
+    }
+});
+
+//egy listázása
+router.get('/:id', async(req, res, next) => {
+    try {
+        const ticketId = Number(req.params.id);
+
+        const ticket = await findTicketById(ticketId);
+
+        if(!ticket) {
+            res.status(404);
+            throw new Error("Nincs ilyen ticket.");
+        }
+        res.json({
+            ticket,
+        });
+    } catch(err) {
         next(err);
     }
 });
@@ -149,6 +179,13 @@ function deleteTicket(id) {
 
 function findTicket() {
     return db.ticket.findMany({
+        include: {
+            owner: {
+                select: {
+                    username: true,
+                },
+            },
+        },
         orderBy: {
             createdAt: "desc",
         },
@@ -160,6 +197,13 @@ function findTicketByUserId(id) {
         where: {
             userId: id,
         },
+        include: {
+            owner: {
+                select: {
+                    username: true,
+                },
+            },
+        },
         orderBy: {
             createdAt: "desc",
         },
@@ -170,6 +214,13 @@ function findTicketById(id) {
     return db.ticket.findUnique({
         where: {
             id,
+        },
+        include: {
+            owner: {
+                select: {
+                    username: true,
+                },
+            },
         },
     });
 }

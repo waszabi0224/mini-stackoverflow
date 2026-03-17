@@ -155,6 +155,13 @@ function findComment(id) {
         where: {
             ticketId: id,
         },
+        include: {
+            owner: {
+                select: {
+                    username: true,
+                },
+            },
+        },
         orderBy: {
             createdAt: "desc",
         },

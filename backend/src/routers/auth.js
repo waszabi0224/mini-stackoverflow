@@ -54,13 +54,13 @@ router.post('/bejelentkezes', async(req, res, next) => {
         const existingUser = await findUserByEmail(email);
 
         if(!existingUser) {
-            res.status(401);
+            res.status(403);
             throw new Error("Hibás felhasználónév vagy jelszó.");
         }
 
         const validPassword = await bcrypt.compare(password, existingUser.password);
         if(!validPassword) {
-            res.status(401);
+            res.status(403);
             throw new Error("Hibás felhasználónév vagy jelszó.");
         }
 

@@ -2,8 +2,11 @@ import express from "express";
 import authRouter from "./routers/auth.js"
 import ticketRouter from "./routers/tickets.js";
 import commentRouter from "./routers/comments.js";
+import cors from "cors";
 
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 
