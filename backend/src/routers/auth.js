@@ -76,9 +76,9 @@ router.post('/bejelentkezes', async(req, res, next) => {
     }
 });
 
-router.post('/kijelentkezes', async(req, res, next) => {
+/*router.post('/kijelentkezes', async(req, res, next) => {
     res.json({ ok: true });
-});
+});*/
 
 router.get('/profil', isAuthenticated, async(req, res, next) => {
     try {
